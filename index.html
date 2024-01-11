@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBAH PET QUOTES</title>
+
+    <!-- Tambahkan link Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+      /* Atur latar belakang menjadi setengah sedikit pink muda */
+      body {
+          background-color: #ffc0cb;
+      }
+  
+      /* Atur form menjadi responsif dan berada di tengah */
+      #createForm {
+          max-width: 400px;
+          margin: auto;
+          padding: 20px;
+          background-color: #fff; 
+          border-radius: 10px;
+          margin-top: 30px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          text-align: center; 
+      }
+  
+     
+      button[type="submit"] {
+          margin-top: 10px;
+      }
+  
+      
+      #Image {
+          display: block;
+          margin: auto;
+          margin-top: 30px;
+          width: 10rem;
+          height: 10rem;
+          border-radius: 40px;
+      }
+  
+     
+      #dataList {
+          display: none;
+      }
+
+    label {
+        text-align: left;
+        display: block;
+        margin-bottom: 5px;
+    }
+  </style>
+  
+</head>
+<body>
+  <img id="Image" src="https://i.ibb.co/GJcKPCB/petrik.png" alt="petrik">
+    <form method="post" id="createForm">
+        <label for="nameInput" class="form-label">Jenengmu :</label>
+        <input type="text" class="form-control" id="nameInput" placeholder="anonym ae bolo Jenenge" required>
+        <br>
+        <label for="quotesInput" class="form-label">Kata - Kata Hari ini :</label>
+        <input type="text" class="form-control" id="quotesInput" placeholder="kata - kata hari ini" required>
+        <br>
+        <button type="submit" class="btn btn-primary">Simpen Bolo</button>
+    </form>
+
+    <ul id="dataList"></ul>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https:/cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+  <script>
+    const socket =  io();
+
+    document.getElementById('createForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const newName = document.getElementById('nameInput').value;
+        const newQuote = document.getElementById('quotesInput').value;
+
+        const newData = { id: Date.now(), name: newName, quote: newQuote };
+        socket.emit('create', newData);
+
+        document.getElementById('nameInput').value = ' ';
+        document.getElementById('quotesInput').value = ' ';
+    });
+
+    socket.on('data', (updateData) => {
+
+        const dataList = document.getElementById('dataList');
+
+        dataList.innerHTML = ' ';
+        updateData.forEach((item) => {
+        const listenItem = document.createElement('li');
+        listenItem.textContent = `jenengmu ${item.name}, quote: ${item.quote}`;
+        
+       dataList.appendChild(listenItem);
+      });
+    });
+  </script>
+</body>
+</html>

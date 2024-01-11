@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBAH PET QUOTES</title>
+</head>
+<body>
+  <form method="post" id="createForm">
+    <label for="nameInput">Jenengmu : </label>
+        <input type="text" id="nameInput" placeholder="anonym ae bolo Jenenge" required>
+    <br>
+    <label for="quotesInput"></label>
+        <input type="text" id="quotesInput" placeholder="kata - kata hari ini" required>
+    <br>
+        <button type="submit">Simpen Bolo</button>
+  </form>
+
+  <ul id="dataList"></ul>
+
+  <script src="https:/cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+  <script>
+    const socket =  io();
+
+    document.getElementById('createForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const newName = document.getElementById('nameInput').value;
+        const newQuote = document.getElementById('quotesInput').value;
+
+        const newData = { id: Date.now(), name: newName, quote: newQuote };
+        socket.emit('create', newData);
+
+        document.getElementById('nameInput').value = ' ';
+        document.getElementById('quotesInput').value = ' ';
+    });
+
+    socket.on('data', (updateData) => {
+
+        const dataList = document.getElementById('dataList');
+
+        dataList.innerHTML = ' ';
+        updateData.forEach((item) => {
+        const listenItem = document.createElement('li');
+        listenItem.textContent = `jenengmu ${item.name}, quote: ${item.quote}`;
+        
+       dataList.appendChild(listenItem);
+      });
+    });
+  </script>
+</body>
+</html>
